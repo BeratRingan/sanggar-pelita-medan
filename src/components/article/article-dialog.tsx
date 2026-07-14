@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
 
@@ -14,8 +15,12 @@ import {
 import { ArticleForm } from "./article-form";
 
 export function ArticleDialog() {
+  const [open, setOpen] = useState(false);
   return (
-    <Dialog>
+    <Dialog
+      open={open}
+      onOpenChange={setOpen}
+      >
       <DialogTrigger asChild>
         <Button>
           + Tambah Artikel
