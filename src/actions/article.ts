@@ -9,6 +9,15 @@ export async function createArticle(formData: FormData) {
   const title = formData.get("title") as string;
   const slug = formData.get("slug") as string;
   const content = formData.get("content") as string;
+    if (!title?.trim()) {
+      throw new Error("Judul artikel wajib diisi.");
+    }
+    if (!content?.trim()) {
+      throw new Error("Isi artikel wajib diisi.");
+    }
+    if (!slug?.trim()) {
+    throw new Error("Slug artikel tidak valid.");
+    }
   const status = formData.get("status") as string;
   const image = formData.get("image") as File | null;
   const supabase = await createClient();
@@ -46,8 +55,14 @@ export async function createArticle(formData: FormData) {
     });
 
   if (error) {
-    throw new Error(error.message);
+  if (error.code === "23505") {
+    throw new Error(
+      "Judul artikel sudah digunakan. Silakan gunakan judul lain."
+    );
   }
+
+  throw new Error(error.message);
+}
 
   revalidatePath("/admin");
 }

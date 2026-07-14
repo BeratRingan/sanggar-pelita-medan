@@ -35,7 +35,10 @@ overflow-y-auto">
           </DialogTitle>
         </DialogHeader>
 
-        <ArticleForm />
+        <ArticleForm
+          onCancel={() => setOpen(false)}
+          onSuccess={() => setOpen(false)}
+        />
       </DialogContent>
     </Dialog>
   );

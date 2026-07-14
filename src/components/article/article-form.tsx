@@ -16,8 +16,16 @@ import type { Article } from "@/types/article";
 
 type ArticleFormProps = {
   article?: Article;
+  onCancel?: () => void;
+  onSuccess?: () => void;
 };
-export function ArticleForm({ article }: ArticleFormProps) {
+
+export function ArticleForm({
+  article,
+  onCancel,
+  onSuccess,
+}: ArticleFormProps) {
+
   const isEditMode = Boolean(article);
   const defaultStatus = article
   ? article.published
@@ -28,8 +36,9 @@ export function ArticleForm({ article }: ArticleFormProps) {
   const [preview, setPreview] = useState(
   article?.image_url ?? ""
   );
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [, setImage] = useState<File | null>(null);
-
   const slug = useMemo(() => {
     if (article && title === article.title) {
       return article.slug;
@@ -50,15 +59,36 @@ export function ArticleForm({ article }: ArticleFormProps) {
     setPreview(URL.createObjectURL(file));
   }
 
+ async function handleSubmit(formData: FormData) {
+  setIsSubmitting(true);
+  setErrorMessage("");
+
+  try {
+    if (isEditMode) {
+      await updateArticle(formData);
+      return;
+    }
+
+    await createArticle(formData);
+
+    onSuccess?.();
+
+  } catch (error) {
+    if (error instanceof Error) {
+      setErrorMessage(error.message);
+    } else {
+      setErrorMessage("Terjadi kesalahan.");
+    }
+  } finally {
+    setIsSubmitting(false);
+  }
+}
+
   return (
     <form
-  action={
-    isEditMode
-      ? updateArticle
-      : createArticle
-  }
-  className="space-y-6"
->
+      action={handleSubmit}
+      className="space-y-6"
+    >
       {/* Input Judul */}
       <div className="space-y-2">
         <Label htmlFor="title" className="mb-2 block">Judul Artikel</Label>
@@ -160,15 +190,30 @@ export function ArticleForm({ article }: ArticleFormProps) {
         </RadioGroup>
       </div>
 
+      {errorMessage && (
+      <p className="text-sm text-destructive">
+        {errorMessage}
+      </p>
+    )}
+
       
       <div className="flex justify-end gap-3 border-t pt-6 mt-8">
-          <Button variant="outline" type="button">
+          <Button
+            variant="outline"
+            type="button"
+            onClick={onCancel}
+          >
             Batal
           </Button>
-        <Button type="submit">
-          {isEditMode
-            ? "Perbarui Artikel"
-            : "Simpan Artikel"}
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+        >
+          {isSubmitting
+          ? "Menyimpan..."
+          : isEditMode
+          ? "Perbarui Artikel"
+          : "Simpan Artikel"}
         </Button>
       </div>
     </form>
