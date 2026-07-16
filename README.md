@@ -201,3 +201,12 @@ sanggar-pelita-medan
 └─ tsconfig.json
 
 ```
+
+## Development Environment
+
+This project can be developed using GitHub Codespaces.
+
+Required environment variables:
+
+- NEXT_PUBLIC_SUPABASE_URL
+- NEXT_PUBLIC_SUPABASE_ANON_KEY
