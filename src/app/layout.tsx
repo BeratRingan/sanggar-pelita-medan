@@ -36,6 +36,14 @@ export const metadata: Metadata = {
       },
     ],
   },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Sanggar Pelita Medan | Ruang berbagi dan bertumbuh bersama",
+    description:
+      "Website resmi Sanggar Pelita Medan yang menyajikan informasi kegiatan, artikel, dan ruang berbagi untuk belajar, berkarya, dan bertumbuh bersama.",
+    images: ["/logo/logo.svg"],
+  },
 };
 
 export default function RootLayout({
