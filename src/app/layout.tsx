@@ -22,6 +22,20 @@ export const metadata: Metadata = {
     "Website resmi Sanggar Pelita Medan yang menyajikan informasi kegiatan, artikel, dan ruang berbagi untuk belajar, berkarya, dan bertumbuh bersama.",
 
   applicationName: "Sanggar Pelita Medan",
+
+  openGraph: {
+    title: "Sanggar Pelita Medan | Ruang berbagi dan bertumbuh bersama",
+    description:
+      "Website resmi Sanggar Pelita Medan yang menyajikan informasi kegiatan, artikel, dan ruang berbagi untuk belajar, berkarya, dan bertumbuh bersama.",
+    type: "website",
+    locale: "id_ID",
+    images: [
+      {
+        url: "/logo/logo.svg",
+        alt: "Logo Sanggar Pelita Medan",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
