@@ -17,6 +17,25 @@ export async function getPublishedArticles() {
     return data ?? [];
 }
 
+export async function getLatestArticles() {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("articles")
+    .select("*")
+    .eq("published", true)
+    .order("created_at", {
+      ascending: false,
+    })
+    .limit(3);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data ?? [];
+}
+
 export async function getArticleBySlug(
   slug: string
 ) {
