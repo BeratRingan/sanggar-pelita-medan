@@ -2,61 +2,65 @@ import { getArticleBySlug } from "@/services/public-article.service";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+
 type ArticlePageProps = {
-    params: Promise<{
-        slug: string;
-    }>;
+  params: Promise<{
+    slug: string;
+  }>;
 };
 
 export default async function ArticlePage({
-    params,
+  params,
 }: ArticlePageProps) {
-    const { slug } = await params;
-    const article = await getArticleBySlug(slug);
-    if (!article) {
-        notFound();
-    }
+  const { slug } = await params;
+  const article = await getArticleBySlug(slug);
 
-    return (
-        <main className="mx-auto max-w-4xl px-6 py-16">
-            {article.image_url && (
-                <div className="relative mb-10 h-80 w-full
-                overflow-hiden rounded-xl">
-                    <Image
-                        src={article.image_url}
-                        alt={article.title}
-                        fill
-                        className="object-cover"
-                        unoptimized
-                    />
-                </div>
-            )}
-            <h1 className="text-4xl font-bold">
-                {article.title}
-            </h1>
+  if (!article) {
+    notFound();
+  }
 
-            <p className="mt-4 text-muted-foreground">
-                {new
-            Date(article.created_at).toLocaleDateString("id-ID"
-            , {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-            })}
-            </p>
+  const publishedDate = new Date(article.created_at);
+  const formattedDate = publishedDate.toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
-            <article className="mt-10 whitespace-pre-wrap leading-8">
-                {article.content}
-            </article>
-            <div className="mt-12">
-                <Link
-                    href="/"
-                    className="font-medium text-primary transition
-                    hover:underline"
-                >
-                    Kembali Ke Beranda
-                </Link>
-            </div>
-        </main>
-    );
+  return (
+    <article className="mx-auto max-w-4xl px-6 py-16">
+      <Link
+        href="/artikel"
+        className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+      >
+        ← Kembali ke Artikel
+      </Link>
+
+      <time
+        dateTime={publishedDate.toISOString()}
+        className="mt-8 block text-sm text-muted-foreground"
+      >
+        {formattedDate}
+      </time>
+
+      <h1 className="mt-2 text-3xl font-bold tracking-tight md:text-4xl">
+        {article.title}
+      </h1>
+
+      {article.image_url && (
+        <div className="relative mt-8 h-64 w-full overflow-hidden rounded-xl md:h-96">
+          <Image
+            src={article.image_url}
+            alt={article.title}
+            fill
+            className="object-cover"
+            unoptimized
+          />
+        </div>
+      )}
+
+      <div className="mx-auto mt-10 max-w-2xl whitespace-pre-wrap leading-8">
+        {article.content}
+      </div>
+    </article>
+  );
 }
