@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getArticleBySlug } from "@/services/public-article.service";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,6 +9,58 @@ type ArticlePageProps = {
     slug: string;
   }>;
 };
+
+function buildDescription(content: string, maxLength = 155) {
+  const cleaned = content.replace(/\s+/g, " ").trim();
+
+  if (cleaned.length <= maxLength) {
+    return cleaned;
+  }
+
+  return `${cleaned.slice(0, maxLength).trimEnd()}...`;
+}
+
+export async function generateMetadata({
+  params,
+}: ArticlePageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const article = await getArticleBySlug(slug);
+
+  if (!article) {
+    return {
+      title: "Artikel Tidak Ditemukan | Sanggar Pelita Medan",
+      description:
+        "Artikel yang kamu cari tidak tersedia atau sudah tidak dipublikasikan.",
+    };
+  }
+
+  const title = `${article.title} | Sanggar Pelita Medan`;
+  const description = buildDescription(article.content);
+  const imageUrl = article.image_url ?? "/logo/logo.svg";
+
+  return {
+  title,
+  description,
+  openGraph: {
+    title,
+    description,
+    type: "article",
+    locale: "id_ID",
+    images: [
+      {
+        url: imageUrl,
+        alt: article.title,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: [imageUrl],
+  },
+};
+}
 
 export default async function ArticlePage({
   params,
