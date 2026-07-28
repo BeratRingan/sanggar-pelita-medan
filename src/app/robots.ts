@@ -1,12 +1,15 @@
 import type { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
-    return {
-        //sementara kosong - akan diisi nanti
-        rules: {
-            userAgent: "*",
-            allow: "/",
-            disallow: "/admin",
-        },
-    };
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
+  return {
+    rules: {
+      userAgent: "*",
+      allow: "/",
+      disallow: "/admin",
+    },
+    sitemap: `${baseUrl}/sitemap.xml`,
+  };
 }
