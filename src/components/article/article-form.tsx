@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   createArticle,
   updateArticle,
@@ -18,13 +19,16 @@ type ArticleFormProps = {
   article?: Article;
   onCancel?: () => void;
   onSuccess?: () => void;
+  cancelHref?: string;
 };
 
 export function ArticleForm({
   article,
   onCancel,
   onSuccess,
+  cancelHref,
 }: ArticleFormProps) {
+  const router = useRouter();
 
   const isEditMode = Boolean(article);
   const defaultStatus = article
@@ -59,30 +63,43 @@ export function ArticleForm({
     setPreview(URL.createObjectURL(file));
   }
 
- async function handleSubmit(formData: FormData) {
-  setIsSubmitting(true);
-  setErrorMessage("");
-
-  try {
-    if (isEditMode) {
-      await updateArticle(formData);
-      return;
+  // REVISI 1: Hapus fallback hardcoded
+  const handleCancel = () => {
+    if (cancelHref) {
+      router.push(cancelHref);
+    } else if (onCancel) {
+      onCancel();
     }
+    // Tidak ada fallback - tanggung jawab parent
+  };
 
-    await createArticle(formData);
+  async function handleSubmit(formData: FormData) {
+    setIsSubmitting(true);
+    setErrorMessage("");
 
-    onSuccess?.();
+    try {
+      if (isEditMode) {
+        await updateArticle(formData);
+        if (cancelHref) {
+          router.push(cancelHref);
+        }
+        return;
+      }
 
-  } catch (error) {
-    if (error instanceof Error) {
-      setErrorMessage(error.message);
-    } else {
-      setErrorMessage("Terjadi kesalahan.");
+      await createArticle(formData);
+
+      onSuccess?.();
+
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("Terjadi kesalahan.");
+      }
+    } finally {
+      setIsSubmitting(false);
     }
-  } finally {
-    setIsSubmitting(false);
   }
-}
 
   return (
     <form
@@ -98,6 +115,7 @@ export function ArticleForm({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Masukkan judul artikel..."
+          required
         />
       </div>
 
@@ -142,28 +160,34 @@ export function ArticleForm({
           className="min-h-[220px] resize-y" 
           placeholder="Tulis artikel kegiatan..." 
           defaultValue={article?.content ?? ""}
+          required
         />
       </div>
 
       
       <div className="space-y-2">
-        <Label htmlFor="image" className="mb-2 block">Upload Foto</Label>
+        <Label htmlFor="image" className="mb-2 block">Gambar Artikel</Label>
         <Input 
           id="image" 
           name="image"
           type="file" 
           accept="image/*" 
           onChange={handleImage} />
+        {/* REVISI 2: Hapus "Maksimal 5 MB" */}
+        <p className="text-xs text-muted-foreground">
+          Format: JPG, PNG, WEBP
+        </p>
       </div>
 
       {preview && (
         <div className="space-y-2">
-          <Label className="mb-2 block">Preview</Label>
+          {/* REVISI 3: Ubah label Preview menjadi Preview Gambar */}
+          <Label className="mb-2 block">Preview Gambar</Label>
           <div className="relative h-60 w-full overflow-hidden rounded-xl border shadow-sm">
             <Image
               fill
               src={preview}
-              alt="Preview"
+              alt="Preview Gambar"
               className="object-cover"
               unoptimized
             />
@@ -191,17 +215,17 @@ export function ArticleForm({
       </div>
 
       {errorMessage && (
-      <p className="text-sm text-destructive">
-        {errorMessage}
-      </p>
-    )}
+        <div className="rounded-md border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {errorMessage}
+        </div>
+      )}
 
       
       <div className="flex justify-end gap-3 border-t pt-6 mt-8">
           <Button
             variant="outline"
             type="button"
-            onClick={onCancel}
+            onClick={handleCancel}
           >
             Batal
           </Button>
