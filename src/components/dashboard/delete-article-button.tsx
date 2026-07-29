@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { deleteArticle } from "@/actions/article";
 import { Button } from "@/components/ui/button";
 
@@ -10,6 +11,9 @@ type DeleteArticleButtonProps = {
 export function DeleteArticleButton({
   id,
 }: DeleteArticleButtonProps) {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
   async function handleDelete() {
     const confirmed = window.confirm(
       "Yakin ingin menghapus artikel ini?"
@@ -19,16 +23,39 @@ export function DeleteArticleButton({
       return;
     }
 
-    await deleteArticle(id);
+    try {
+      setIsDeleting(true);
+      setErrorMessage("");
+
+      await deleteArticle(id);
+
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("Gagal menghapus artikel.");
+      }
+    } finally {
+      setIsDeleting(false);
+    }
   }
 
   return (
-    <Button
-      variant="destructive"
-      size="sm"
-      onClick={handleDelete}
-    >
-    Delete
-  </Button>
+    <div className="space-y-2">
+      <Button
+        variant="destructive"
+        size="sm"
+        onClick={handleDelete}
+        disabled={isDeleting}
+      >
+        {isDeleting ? "Menghapus..." : "Delete"}
+      </Button>
+
+      {errorMessage && (
+        <p className="text-xs text-destructive">
+          {errorMessage}
+        </p>
+      )}
+    </div>
   );
 }
