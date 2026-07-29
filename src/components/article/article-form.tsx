@@ -22,6 +22,9 @@ type ArticleFormProps = {
   cancelHref?: string;
 };
 
+// NEW: Konstanta untuk batas ukuran gambar
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB dalam bytes
+
 export function ArticleForm({
   article,
   onCancel,
@@ -55,15 +58,28 @@ export function ArticleForm({
       .replace(/[^\w-]+/g, "");
   }, [title, article]);
 
+  // REVISI: Tambahkan validasi ukuran gambar
   function handleImage(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Client-side validation: cek ukuran file
+    if (file.size > MAX_IMAGE_SIZE) {
+      setErrorMessage(
+        "Ukuran gambar terlalu besar. Maksimal 5MB."
+      );
+      // Reset input file agar user bisa pilih ulang
+      e.target.value = "";
+      return;
+    }
+
+    // Clear error message jika sebelumnya ada error
+    setErrorMessage("");
     setImage(file);
     setPreview(URL.createObjectURL(file));
   }
 
-  // REVISI 1: Hapus fallback hardcoded
+  // REVISI: Hapus fallback hardcoded
   const handleCancel = () => {
     if (cancelHref) {
       router.push(cancelHref);
@@ -173,15 +189,13 @@ export function ArticleForm({
           type="file" 
           accept="image/*" 
           onChange={handleImage} />
-        {/* REVISI 2: Hapus "Maksimal 5 MB" */}
         <p className="text-xs text-muted-foreground">
-          Format: JPG, PNG, WEBP
+          Format: JPG, PNG, WEBP • Maksimal 5MB
         </p>
       </div>
 
       {preview && (
         <div className="space-y-2">
-          {/* REVISI 3: Ubah label Preview menjadi Preview Gambar */}
           <Label className="mb-2 block">Preview Gambar</Label>
           <div className="relative h-60 w-full overflow-hidden rounded-xl border shadow-sm">
             <Image
