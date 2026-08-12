@@ -9,6 +9,7 @@ import {
   Home,
   LogOut,
   Settings,
+  Users,
   X,
 } from "lucide-react";
 
@@ -21,6 +22,11 @@ const menus = [
     title: "Dashboard",
     href: "/admin",
     icon: Home,
+  },
+  {
+    title: "Relawan",
+    href: "/admin/team-members",
+    icon: Users,
   },
   {
     title: "Artikel",

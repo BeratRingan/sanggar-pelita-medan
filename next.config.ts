@@ -1,9 +1,18 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   reactCompiler: true,
-  allowedDevOrigins: ['192.168.100.17'],
+
+  allowedDevOrigins: ["192.168.100.17"],
+
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "pswmlqgkihbzlhpdlrcg.supabase.co",
+      },
+    ],
+  },
 };
 
 export default nextConfig;
