@@ -43,7 +43,7 @@ export const siteConfig: SiteConfig = {
     ],
     whatsapp: [
       "+62 812-7562-2290",
-      "+62 823-8161-4440"
+      "+62 813-6138-0918"
     ],
     email: "Sanggarpelita11@gmail.com",
   },
