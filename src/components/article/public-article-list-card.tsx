@@ -13,7 +13,7 @@ export function PublicArticleListCard({
   article,
 }: PublicArticleListCardProps) {
   return (
-    <Card className="pt-0">
+    <Card className="gap-0 py-0">
       <div className="flex flex-col md:flex-row">
         {article.image_url && (
           <div className="relative h-64 md:h-auto md:w-72 shrink-0 overflow-hidden">

@@ -13,9 +13,9 @@ export function PublicArticleCard({
   article,
 }: PublicArticleCardProps) {
   return (
-    <Card>
+    <Card className="gap-0 py-0">
       {article.image_url && (
-         <div className="relative h-52 w-full overflow-hidden rounded-t-lg">
+         <div className="relative h-52 w-full">
           <Image
             src={article.image_url}
             alt={article.title}
