@@ -10,9 +10,10 @@ import {
 import { Link2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { RichTextEditor } from "@/components/article/rich-text-editor";
 import type { Article } from "@/types/article";
 
 type ArticleFormProps = {
@@ -40,9 +41,10 @@ export function ArticleForm({
     : "draft"
   : "published";
   const [title, setTitle] = useState(article?.title ?? "");
+  const [content, setContent] = useState(article?.content ?? "");
   const [preview, setPreview] = useState(
   article?.image_url ?? ""
-  );
+);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [, setImage] = useState<File | null>(null);
@@ -169,14 +171,17 @@ export function ArticleForm({
 
       
       <div className="space-y-2">
-        <Label htmlFor="content" className="mb-2 block">Isi Artikel</Label>
-        <Textarea 
-          id="content"
+        <Label className="mb-2 block">Isi Artikel</Label>
+
+        <RichTextEditor
+          value={content}
+          onChange={setContent}
+        />
+
+        <input
+          type="hidden"
           name="content"
-          className="min-h-[220px] resize-y" 
-          placeholder="Tulis artikel kegiatan..." 
-          defaultValue={article?.content ?? ""}
-          required
+          value={content}
         />
       </div>
 
