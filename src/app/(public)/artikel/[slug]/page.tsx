@@ -3,6 +3,7 @@ import { getArticleBySlug } from "@/services/public-article.service";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArticleContent } from "@/components/article/article-content";
 
 type ArticlePageProps = {
   params: Promise<{
@@ -111,9 +112,7 @@ export default async function ArticlePage({
         </div>
       )}
 
-      <div className="mx-auto mt-10 max-w-2xl whitespace-pre-wrap leading-8">
-        {article.content}
-      </div>
+      <ArticleContent content={article.content} />
     </article>
   );
 }

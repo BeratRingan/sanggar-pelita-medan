@@ -1,8 +1,38 @@
 "use client";
 
 import { useEditor, EditorContent } from "@tiptap/react";
+import { Extension } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";
+import { TextStyle } from "@tiptap/extension-text-style";
+
+const FontSize = Extension.create({
+  name: "fontSize",
+
+  addGlobalAttributes() {
+    return [
+      {
+        types: ["textStyle"],
+        attributes: {
+          fontSize: {
+            default: null,
+            parseHTML: (element) =>
+              element.style.fontSize || null,
+            renderHTML: (attributes) => {
+              if (!attributes.fontSize) {
+                return {};
+              }
+
+              return {
+                style: `font-size: ${attributes.fontSize}`,
+              };
+            },
+          },
+        },
+      },
+    ];
+  },
+});
 
 type RichTextEditorProps = {
   value: string;
@@ -35,15 +65,17 @@ export function RichTextEditor({
         TextAlign.configure({
             types: ["heading", "paragraph"],
         }),
+        TextStyle,
+        FontSize,
     ],
     content: value,
     immediatelyRender: false,
     // Perubahan 1: Menambahkan properti editorProps untuk styling area ketik internal
     editorProps: {
-      attributes: {
-        class:
-          "min-h-55 w-full cursor-text outline-none focus:outline-none",
-      },
+        attributes: {
+            class:
+            "min-h-55 w-full cursor-text outline-none focus:outline-none [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:leading-tight [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:leading-tight",
+        },
     },
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
@@ -75,16 +107,53 @@ export function RichTextEditor({
           I
         </button>
 
-        <button
-          type="button"
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 2 }).run()
+        <select
+        value={
+            editor.isActive("heading", { level: 1 })
+            ? "h1"
+            : editor.isActive("heading", { level: 2 })
+            ? "h2"
+            : "paragraph"
         }
-        className="rounded px-3 py-1.5 text-sm font-semibold hover:bg-muted"
-        aria-label="Heading 2"
+        onChange={(e) => {
+            const value = e.target.value;
+
+            if (value === "paragraph") {
+                editor.chain().focus().setParagraph().run();
+                return;
+            }
+
+            if (value === "h1") {
+                editor.chain().focus().setHeading({ level: 1 }).run();
+                return;
+            }
+
+            if (value === "h2") {
+                editor.chain().focus().setHeading({ level: 2 }).run();
+            }
+        }}
+        className="rounded-md border bg-background px-3 py-1.5 text-sm"
+        aria-label="Format teks"
         >
-            H2
-        </button>
+            <option value="paragraph">Normal</option>
+            <option value="h1">Judul</option>
+            <option value="h2">Subjudul</option>
+            </select>
+
+            <button
+             type="button"
+             onClick={() =>
+                editor
+                .chain()
+                .focus()
+                .setMark("textStyle", { fontSize: "12px" })
+                .run()
+            }
+            className="rounded px-3 py-1.5 text-sm hover:bg-muted"
+            aria-label="Ukuran kecil"
+            >
+                Kecil
+                </button>
 
         <button
           type="button"
@@ -152,26 +221,28 @@ export function RichTextEditor({
                     ❝
                     </button>
 
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().undo().run()}
-          disabled={!editor.can().undo()}
-          className="rounded px-3 py-1.5 text-sm hover:bg-muted disabled:opacity-40"
-          aria-label="Urungkan"
-        >
-          ↶
-        </button>
+                <button
+                  type="button"
+                    onClick={() => {
+                        editor.chain().focus().undo().run();
+                    }}
+                    className="rounded px-3 py-1.5 text-sm hover:bg-muted"
+                    aria-label="Urungkan"
+                    >
+                        ↶
+                    </button>
 
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().redo().run()}
-          disabled={!editor.can().redo()}
-          className="rounded px-3 py-1.5 text-sm hover:bg-muted disabled:opacity-40"
-          aria-label="Ulangi"
-        >
-          ↷
-        </button>
-      </div>
+                <button
+                  type="button"
+                    onClick={() => {
+                        editor.chain().focus().redo().run();
+                    }}
+                    className="rounded px-3 py-1.5 text-sm hover:bg-muted"
+                    aria-label="Ulangi"
+                    >
+                        ↷
+                    </button>
+</div>
 
       {/* Perubahan 2: Membungkus EditorContent dengan div ber-class "px-4 py-3" */}
       <div

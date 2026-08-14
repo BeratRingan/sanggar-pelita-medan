@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import type { Article } from "@/types/article";
 import { formatDate } from "@/lib/format-date";
+import { stripHtml } from "@/lib/strip-html";
 
 
 type PublicArticleCardProps = {
@@ -36,9 +37,9 @@ export function PublicArticleCard({
         </p>
 
         <p className="mt-4 text-sm text-muted-foreground line-clamp-3">
-          {article.content.length > 120
-            ? `${article.content.slice(0, 120)}...`
-            : article.content}
+          {stripHtml(article.content).length > 120
+            ? `${stripHtml(article.content).slice(0, 120)}...`
+            : stripHtml(article.content)}
         </p>
 
         <div className="mt-6">
