@@ -5,7 +5,7 @@ export default async function ArticlesPage() {
   return (
     <main className="mx-auto max-w-6xl px-6 py-16">
       <h1 className="text-4xl font-bold">
-        Semua Artikel
+        Semua Kegiatan Kami
       </h1>
 
       <p className="mt-4">
