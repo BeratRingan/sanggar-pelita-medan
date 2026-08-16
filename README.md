@@ -1,212 +1,174 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sanggar Pelita Medan
+
+Website profil dan Content Management System (CMS) ringan untuk **Sanggar Pelita Medan**, sebuah ruang berbagi dan bertumbuh bersama yang berfokus pada kegiatan pendidikan, relawan, dan kolaborasi.
+
+Website ini dirancang dengan pendekatan minimalis, responsif, dan mudah dikelola untuk kebutuhan publikasi kegiatan Sanggar.
+
+## Features
+
+### Public Website
+
+- Homepage profil Sanggar Pelita Medan
+- Tentang Sanggar
+- Relawan dan struktur tim
+- Halaman kolaborasi
+- Daftar kegiatan/artikel
+- Detail kegiatan dengan rich text content
+- Responsive layout untuk desktop dan mobile
+- Custom 404 page
+- SEO foundation
+- Sitemap dan robots configuration
+
+### Admin Dashboard
+
+- Protected admin authentication
+- Dashboard overview
+- Create article
+- Edit article
+- Delete article
+- Publish/unpublish content
+- Upload dan preview gambar
+- Automatic image lifecycle handling
+- Team member management
+- Upload dan preview foto relawan
+- Rich Text Editor untuk artikel
+- Validation dan feedback pada form
+
+## Tech Stack
+
+- **Next.js 16.2.11** - App Router
+- **React 19.2.4**
+- **TypeScript**
+- **Tailwind CSS v4**
+- **shadcn/ui**
+- **Supabase**
+  - Authentication
+  - PostgreSQL database
+  - Storage
+- **Tiptap** - Rich Text Editor
+- **DOMPurify** - HTML sanitization
+- **Lucide React** - Icons
+- **Vercel** - Deployment
+
+## Project Structure
+
+Struktur utama project:
+
+```text
+src/
+|-- actions/          # Server actions
+|-- app/
+|   |-- (auth)/       # Authentication pages
+|   |-- (dashboard)/  # Protected admin area
+|   `-- (public)/     # Public website pages
+|-- components/
+|   |-- article/      # Article components
+|   |-- auth/         # Authentication components
+|   |-- dashboard/    # Dashboard components
+|   |-- home/         # Homepage sections
+|   |-- layout/       # Navbar and footer
+|   `-- ui/           # Reusable UI components
+|-- hooks/            # Custom React hooks
+|-- lib/
+|   `-- supabase/     # Supabase clients and helpers
+|-- services/         # Data access and business logic
+|-- types/            # TypeScript types
+`-- utils/            # Utility functions
+```
 
 ## Getting Started
 
-First, run the development server:
+### Requirements
+
+- Node.js
+- npm
+- Supabase project
+
+### Installation
+
+Clone repository:
+
+```bash
+git clone <repository-url>
+cd sanggar-pelita-medan
+```
+Install dependencies:
+
+```bash
+npm install
+```
+### Environment Variables
+
+Create a `.env.local` file in the project root:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+```
+
+Do not commit .env.local or any secret credentials to the repository.
+
+### Run Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Open:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+http://localhost:3000
 
-## Learn More
+## Supabase
 
-To learn more about Next.js, take a look at the following resources:
+The project uses Supabase for:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Authentication
+- Article data
+- Team member data
+- Image and photo storage
+- Row Level Security (RLS) policies
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Supabase configuration must be prepared before running the application with real data.
 
-## Deploy on Vercel
+## Quality Checks
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Before committing changes, run:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-```
-sanggar-pelita-medan
-├─ AGENTS.md
-├─ CLAUDE.md
-├─ components.json
-├─ eslint.config.mjs
-├─ middleware.ts
-├─ next.config.ts
-├─ package-lock.json
-├─ package.json
-├─ postcss.config.mjs
-├─ public
-│  ├─ file.svg
-│  ├─ globe.svg
-│  ├─ logo
-│  │  └─ logo.svg
-│  ├─ next.svg
-│  ├─ vercel.svg
-│  └─ window.svg
-├─ README.md
-├─ src
-│  ├─ actions
-│  │  └─ article.ts
-│  ├─ app
-│  │  ├─ (auth)
-│  │  │  └─ login
-│  │  │     └─ page.tsx
-│  │  ├─ (dashboard)
-│  │  │  └─ admin
-│  │  │     ├─ layout.tsx
-│  │  │     └─ page.tsx
-│  │  ├─ (public)
-│  │  │  ├─ kegiatan
-│  │  │  └─ page.tsx
-│  │  ├─ api
-│  │  ├─ favicon.ico
-│  │  ├─ globals.css
-│  │  └─ layout.tsx
-│  ├─ components
-│  │  ├─ article
-│  │  │  ├─ article-dialog.tsx
-│  │  │  └─ article-form.tsx
-│  │  ├─ auth
-│  │  │  └─ login-form.tsx
-│  │  ├─ dashboard
-│  │  │  ├─ app-header.tsx
-│  │  │  ├─ app-sidebar.tsx
-│  │  │  ├─ dashboard-article-list.tsx
-│  │  │  ├─ dashboard-empty.tsx
-│  │  │  └─ dashboard-stats.tsx
-│  │  ├─ home
-│  │  │  ├─ about-section.tsx
-│  │  │  ├─ hero-section.tsx
-│  │  │  └─ latest-activities.tsx
-│  │  ├─ layout
-│  │  │  ├─ footer.tsx
-│  │  │  └─ navbar.tsx
-│  │  └─ ui
-│  │     ├─ button.tsx
-│  │     ├─ card.tsx
-│  │     ├─ dialog.tsx
-│  │     ├─ input.tsx
-│  │     ├─ label.tsx
-│  │     ├─ radio-group.tsx
-│  │     └─ textarea.tsx
-│  ├─ hooks
-│  ├─ lib
-│  │  ├─ supabase
-│  │  │  ├─ actions
-│  │  │  │  └─ logout.ts
-│  │  │  ├─ client.ts
-│  │  │  ├─ middleware.ts
-│  │  │  └─ server.ts
-│  │  └─ utils.ts
-│  ├─ services
-│  │  ├─ article.service.ts
-│  │  └─ article.ts
-│  ├─ types
-│  │  └─ article.ts
-│  └─ utils
-└─ tsconfig.json
-
-```
-```
-sanggar-pelita-medan
-├─ AGENTS.md
-├─ CLAUDE.md
-├─ components.json
-├─ eslint.config.mjs
-├─ middleware.ts
-├─ next.config.ts
-├─ package-lock.json
-├─ package.json
-├─ postcss.config.mjs
-├─ public
-│  ├─ file.svg
-│  ├─ globe.svg
-│  ├─ logo
-│  │  └─ logo.svg
-│  ├─ next.svg
-│  ├─ vercel.svg
-│  └─ window.svg
-├─ README.md
-├─ src
-│  ├─ actions
-│  │  └─ article.ts
-│  ├─ app
-│  │  ├─ (auth)
-│  │  │  └─ login
-│  │  │     └─ page.tsx
-│  │  ├─ (dashboard)
-│  │  │  └─ admin
-│  │  │     ├─ layout.tsx
-│  │  │     └─ page.tsx
-│  │  ├─ (public)
-│  │  │  ├─ kegiatan
-│  │  │  └─ page.tsx
-│  │  ├─ api
-│  │  ├─ favicon.ico
-│  │  ├─ globals.css
-│  │  └─ layout.tsx
-│  ├─ components
-│  │  ├─ article
-│  │  │  ├─ article-dialog.tsx
-│  │  │  └─ article-form.tsx
-│  │  ├─ auth
-│  │  │  └─ login-form.tsx
-│  │  ├─ dashboard
-│  │  │  ├─ app-header.tsx
-│  │  │  ├─ app-sidebar.tsx
-│  │  │  ├─ dashboard-article-list.tsx
-│  │  │  ├─ dashboard-empty.tsx
-│  │  │  └─ dashboard-stats.tsx
-│  │  ├─ home
-│  │  │  ├─ about-section.tsx
-│  │  │  ├─ hero-section.tsx
-│  │  │  └─ latest-activities.tsx
-│  │  ├─ layout
-│  │  │  ├─ footer.tsx
-│  │  │  └─ navbar.tsx
-│  │  └─ ui
-│  │     ├─ button.tsx
-│  │     ├─ card.tsx
-│  │     ├─ dialog.tsx
-│  │     ├─ input.tsx
-│  │     ├─ label.tsx
-│  │     ├─ radio-group.tsx
-│  │     └─ textarea.tsx
-│  ├─ hooks
-│  ├─ lib
-│  │  ├─ supabase
-│  │  │  ├─ actions
-│  │  │  │  └─ logout.ts
-│  │  │  ├─ client.ts
-│  │  │  ├─ middleware.ts
-│  │  │  └─ server.ts
-│  │  └─ utils.ts
-│  ├─ services
-│  │  ├─ article.service.ts
-│  │  └─ article.ts
-│  ├─ types
-│  │  └─ article.ts
-│  └─ utils
-└─ tsconfig.json
-
+```bash
+npm run lint
+npm run build
 ```
 
-## Development Environment
+Both commands should complete successfully before deployment.
 
-This project can be developed using GitHub Codespaces.
+## Deployment
 
-Required environment variables:
+The application is designed to be deployed on Vercel.
 
-- NEXT_PUBLIC_SUPABASE_URL
-- NEXT_PUBLIC_SUPABASE_ANON_KEY
+Production deployment requires the following environment variables to be configured in the Vercel project:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+NEXT_PUBLIC_SITE_URL
+```
+
+After deployment, the production website should be verified through responsive and functional QA.
+
+## Project Status
+
+Version 1.0 - Release Preparation
+
+The V1 scope focuses on:
+
+- Professional public profile website
+- Article/activity publishing
+- Basic content management
+- Team member management
+- Responsive experience
+- SEO foundation
+- Production-ready code quality
+
+Future improvements will be evaluated based on actual user and organizational needs rather than being added solely for feature completeness.
