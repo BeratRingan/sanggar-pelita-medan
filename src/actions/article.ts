@@ -50,28 +50,31 @@ export async function createArticle(formData: FormData) {
 
 export async function deleteArticle(
   id: string,
-  imageUrl?: string | null) {
-
+  imageUrl?: string | null
+) {
   const supabase = await createClient();
 
   let fileName = "";
 
-if (imageUrl) {
-  fileName = imageUrl.split("/").pop() ?? "";
-}
-if (fileName) {
-  const { error: removeError } = await supabase.storage
-    .from("articles")
-    .remove([fileName]);
-
-  if (removeError) {
-      console.error(
-        "Gagal menghapus gambar:",
-      removeError.message
+  if (imageUrl) {
+    const pathname = new URL(imageUrl).pathname;
+    fileName = decodeURIComponent(
+      pathname.split("/").pop() ?? ""
     );
   }
-}
 
+  if (fileName) {
+    const { error: removeError } = await supabase.storage
+      .from("articles")
+      .remove([fileName]);
+
+    if (removeError) {
+      console.error(
+        "Gagal menghapus gambar:",
+        removeError.message
+      );
+    }
+  }
   const { error } = await supabase
     .from("articles")
     .delete()
@@ -103,7 +106,10 @@ export async function updateArticle(
   let oldFileName = "";
 
   if (oldImageUrl) {
-    oldFileName = oldImageUrl.split("/").pop() ?? "";
+    const pathname = new URL(oldImageUrl).pathname;
+    oldFileName = decodeURIComponent(
+      pathname.split("/").pop() ?? ""
+    );
   }
 
   const { error } = await supabase
