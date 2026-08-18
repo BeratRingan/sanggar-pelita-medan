@@ -76,7 +76,10 @@ export function DashboardArticleList({
                 >
                   Edit
                 </Link>
-                <DeleteArticleButton id={article.id} />
+                <DeleteArticleButton
+                  id={article.id}
+                  imageUrl={article.image_url}
+                />
               </div>
             </div>
           </div>

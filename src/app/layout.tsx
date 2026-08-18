@@ -17,8 +17,9 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-  process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
-),
+    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
+  ),
+
   title: "Sanggar Pelita Medan | Ruang berbagi dan bertumbuh bersama",
 
   description:
@@ -26,10 +27,15 @@ export const metadata: Metadata = {
 
   applicationName: "Sanggar Pelita Medan",
 
+  alternates: {
+    canonical: "/",
+  },
+
   openGraph: {
     title: "Sanggar Pelita Medan | Ruang berbagi dan bertumbuh bersama",
     description:
       "Website resmi Sanggar Pelita Medan yang menyajikan informasi kegiatan, artikel, dan ruang berbagi untuk belajar, berkarya, dan bertumbuh bersama.",
+    url: "/",
     type: "website",
     locale: "id_ID",
     images: [

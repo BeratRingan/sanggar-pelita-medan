@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/button";
 
 type DeleteArticleButtonProps = {
   id: string;
+  imageUrl?: string | null;
 };
 
 export function DeleteArticleButton({
   id,
+  imageUrl,
 }: DeleteArticleButtonProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -27,7 +29,7 @@ export function DeleteArticleButton({
       setIsDeleting(true);
       setErrorMessage("");
 
-      await deleteArticle(id);
+      await deleteArticle(id, imageUrl);
 
     } catch (error) {
       if (error instanceof Error) {
