@@ -70,13 +70,36 @@ export function RichTextEditor({
     ],
     content: value,
     immediatelyRender: false,
-    // Perubahan 1: Menambahkan properti editorProps untuk styling area ketik internal
+
     editorProps: {
-        attributes: {
-            class:
-            "min-h-55 w-full cursor-text outline-none focus:outline-none [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:leading-tight [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:leading-tight",
-        },
+      attributes: {
+        class:
+          "min-h-55 w-full cursor-text outline-none focus:outline-none [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:leading-tight [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:leading-tight",
+      },
+      handleKeyDown: (view, event) => {
+        if (event.key !== "Enter") {
+          return false;
+        }
+        requestAnimationFrame(() => {
+          const { state, dispatch } = view;
+          const marksToReset = [
+            state.schema.marks.bold,
+            state.schema.marks.italic,
+            state.schema.marks.textStyle,
+          ];
+          let tr = state.tr;
+          for (const mark of marksToReset) {
+            if (mark) {
+              tr = tr.removeStoredMark(mark);
+            }
+          }
+          dispatch(tr);
+        });
+
+        return false;
+      },
     },
+
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
@@ -140,20 +163,34 @@ export function RichTextEditor({
             <option value="h2">Subjudul</option>
             </select>
 
-            <button
-             type="button"
-             onClick={() =>
-                editor
-                .chain()
-                .focus()
-                .setMark("textStyle", { fontSize: "12px" })
-                .run()
-            }
-            className="rounded px-3 py-1.5 text-sm hover:bg-muted"
-            aria-label="Ukuran kecil"
-            >
-                Kecil
-                </button>
+<button
+  type="button"
+  onClick={() => {
+    const { state, view } = editor;
+    const { from, to } = state.selection;
+    const textStyle = state.schema.marks.textStyle;
+
+    if (from === to || !textStyle) {
+      return;
+    }
+
+    const tr = state.tr
+      .addMark(
+        from,
+        to,
+        textStyle.create({
+          fontSize: "12px",
+        }),
+      )
+      .setStoredMarks([]);
+
+    view.dispatch(tr);
+  }}
+  className="rounded px-3 py-1.5 text-sm hover:bg-muted"
+  aria-label="Ukuran kecil"
+>
+  Kecil
+</button>
 
         <button
           type="button"
