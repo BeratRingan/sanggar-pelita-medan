@@ -19,29 +19,9 @@ export async function createArticle(formData: FormData) {
     throw new Error("Slug artikel tidak valid.");
     }
   const status = formData.get("status") as string;
-  const image = formData.get("image") as File | null;
+  const imageUrl = formData.get("imageUrl") as string | null;
   const supabase = await createClient();
 
-   let imageUrl: string | null = null;
-    if (image && image.size > 0) {
-      const fileName = `${Date.now()}-${image.name}`;
-      
-      const { error: uploadError } = await supabase.storage
-      .from("articles")
-      .upload(fileName, image);
-
-    if (uploadError) {
-      throw new Error(uploadError.message);
-    }
-
-    const {
-      data: { publicUrl },
-    } = supabase.storage
-        .from("articles")
-        .getPublicUrl(fileName);
-    
-    imageUrl = publicUrl;
-    }
 
   const { error } = await supabase
     .from("articles")
@@ -113,38 +93,18 @@ export async function updateArticle(
   const slug = formData.get("slug") as string;
   const content = formData.get("content") as string;
   const status = formData.get("status") as string;
-  const image = formData.get("image") as File | null;
+  const imageUrl = formData.get("imageUrl") as string | null;
   const oldImageUrl = formData.get("oldImageUrl") as string;
 
   const supabase = await createClient();
 
-  let imageUrl = oldImageUrl;
-  
+  const newImageUrl = imageUrl || oldImageUrl;
+
   let oldFileName = "";
+
   if (oldImageUrl) {
-  oldFileName = oldImageUrl.split("/").pop() ?? "";
-}
-
-
-  if (image && image.size > 0) {
-  const fileName = `${Date.now()}-${image.name}`;
-
-  const { error: uploadError } = await supabase.storage
-    .from("articles")
-    .upload(fileName, image);
-
-  if (uploadError) {
-    throw new Error(uploadError.message);
+    oldFileName = oldImageUrl.split("/").pop() ?? "";
   }
-
-  const {
-    data: { publicUrl },
-  } = supabase.storage
-    .from("articles")
-    .getPublicUrl(fileName);
-
-  imageUrl = publicUrl;
-}
 
   const { error } = await supabase
     .from("articles")
@@ -152,7 +112,7 @@ export async function updateArticle(
       title,
       slug,
       content,
-      image_url: imageUrl,
+      image_url: newImageUrl,
       status,
       published: status === "published",
       updated_at: new Date().toISOString(),
@@ -163,17 +123,19 @@ export async function updateArticle(
     throw new Error(error.message);
   }
 
+  if (imageUrl && imageUrl !== oldImageUrl && oldFileName) {
+    const { error: removeError } = await supabase.storage
+      .from("articles")
+      .remove([oldFileName]);
 
-  if (image && image.size > 0 && oldFileName) {
-  const { error: removeError } = await supabase.storage
-    .from("articles")
-    .remove([oldFileName]);
-
-  if (removeError) {
-    console.error("Gagal menghapus gambar lama:", removeError.message);
+    if (removeError) {
+      console.error(
+        "Gagal menghapus gambar lama:",
+        removeError.message
+      );
+    }
   }
-}
 
-revalidatePath("/admin");
-redirect("/admin");
+  revalidatePath("/admin");
+  redirect("/admin");
 }

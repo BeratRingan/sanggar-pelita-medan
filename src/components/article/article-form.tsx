@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { RichTextEditor } from "@/components/article/rich-text-editor";
 import type { Article } from "@/types/article";
+import { uploadArticleImage } from "@/services/article-image.service";
 
 type ArticleFormProps = {
   article?: Article;
@@ -24,7 +25,7 @@ type ArticleFormProps = {
 };
 
 // NEW: Konstanta untuk batas ukuran gambar
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB dalam bytes
+const MAX_IMAGE_SIZE = 3 * 1024 * 1024; // 3MB dalam bytes
 
 export function ArticleForm({
   article,
@@ -68,7 +69,7 @@ export function ArticleForm({
     // Client-side validation: cek ukuran file
     if (file.size > MAX_IMAGE_SIZE) {
       setErrorMessage(
-        "Ukuran gambar terlalu besar. Maksimal 5MB."
+        "Ukuran gambar terlalu besar. Maksimal 3MB."
       );
       // Reset input file agar user bisa pilih ulang
       e.target.value = "";
@@ -91,33 +92,46 @@ export function ArticleForm({
     // Tidak ada fallback - tanggung jawab parent
   };
 
-  async function handleSubmit(formData: FormData) {
-    setIsSubmitting(true);
-    setErrorMessage("");
+ async function handleSubmit(formData: FormData) {
+  setIsSubmitting(true);
+  setErrorMessage("");
 
-    try {
-      if (isEditMode) {
-        await updateArticle(formData);
-        if (cancelHref) {
-          router.push(cancelHref);
-        }
-        return;
-      }
+  try {
+    const image = formData.get("image") as File | null;
 
-      await createArticle(formData);
+    let imageUrl: string | null = null;
 
-      onSuccess?.();
-
-    } catch (error) {
-      if (error instanceof Error) {
-        setErrorMessage(error.message);
-      } else {
-        setErrorMessage("Terjadi kesalahan.");
-      }
-    } finally {
-      setIsSubmitting(false);
+    if (image && image.size > 0) {
+      const uploadResult = await uploadArticleImage(image);
+      imageUrl = uploadResult.publicUrl;
     }
+
+    formData.delete("image");
+    formData.set("imageUrl", imageUrl ?? "");
+
+    if (isEditMode) {
+      await updateArticle(formData);
+
+      if (cancelHref) {
+        router.push(cancelHref);
+      }
+
+      return;
+    }
+
+    await createArticle(formData);
+
+    onSuccess?.();
+  } catch (error) {
+    if (error instanceof Error) {
+      setErrorMessage(error.message);
+    } else {
+      setErrorMessage("Terjadi kesalahan.");
+    }
+  } finally {
+    setIsSubmitting(false);
   }
+}
 
   return (
     <form
@@ -195,7 +209,7 @@ export function ArticleForm({
           accept="image/*" 
           onChange={handleImage} />
         <p className="text-xs text-muted-foreground">
-          Format: JPG, PNG, WEBP • Maksimal 5MB
+          Format: JPG, PNG, WEBP • Maksimal 3MB
         </p>
       </div>
 
